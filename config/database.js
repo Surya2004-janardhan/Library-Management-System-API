@@ -27,6 +27,7 @@ const testConnection = async () => {
     console.log("✓ MySQL database connection established successfully");
   } catch (error) {
     console.error("✗ Unable to connect to the database:", error.message);
+
     throw error;
   }
 };
