@@ -1,13 +1,6 @@
 const { Book, Member, Transaction, Fine } = require("../models");
 const { Op } = require("sequelize");
 
-/**
- * Validation service for business rules
- */
-
-/**
- * Check if member can borrow books (max 3 books)
- */
 const canMemberBorrow = async (memberId) => {
   const activeTransactions = await Transaction.count({
     where: {

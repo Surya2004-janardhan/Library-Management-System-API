@@ -1,13 +1,6 @@
 const { Fine } = require("../models");
 const { checkAndUpdateSuspension } = require("./memberService");
 
-/**
- * Fine service for payment handling
- */
-
-/**
- * Pay a fine
- */
 const payFine = async (fineId) => {
   const fine = await Fine.findByPk(fineId, {
     include: ["member", "transaction"],
@@ -43,9 +36,7 @@ const getUnpaidFines = async (memberId) => {
   });
 };
 
-/**
- * Get all fines for a member
- */
+//  */
 const getMemberFines = async (memberId) => {
   return await Fine.findAll({
     where: {

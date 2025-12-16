@@ -29,9 +29,6 @@ const payFine = async (req, res) => {
   }
 };
 
-/**
- * Get all fines
- */
 const getAllFines = async (req, res) => {
   try {
     const fines = await Fine.findAll({
@@ -51,9 +48,6 @@ const getAllFines = async (req, res) => {
   }
 };
 
-/**
- * Get unpaid fines for a member
- */
 const getUnpaidFines = async (req, res) => {
   try {
     const fines = await getUnpaidFinesService(req.params.memberId);

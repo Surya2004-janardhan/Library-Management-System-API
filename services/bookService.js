@@ -1,13 +1,7 @@
 const { Book } = require("../models");
 const { sequelize } = require("../config/database");
 
-/**
- * Book service with state machine logic
- */
 
-/**
- * Valid state transitions for books
- */
 const VALID_TRANSITIONS = {
   available: ["borrowed", "maintenance"],
   borrowed: ["available"],

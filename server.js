@@ -12,6 +12,7 @@ const fineRoutes = require("./routes/fineRoutes");
 // Import models to ensure associations are set up
 require("./models");
 
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -40,7 +41,7 @@ app.use("/api", memberRoutes);
 app.use("/api", transactionRoutes);
 app.use("/api", fineRoutes);
 
-// 404 handler
+// 404 handler --- 
 app.use(notFoundHandler);
 
 // Error handler

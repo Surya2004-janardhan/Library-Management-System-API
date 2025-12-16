@@ -1,15 +1,9 @@
 const { addDays, differenceInDays, isAfter } = require("date-fns");
 
-/**
- * Calculate due date from borrowed date (14 days)
- */
 const calculateDueDate = (borrowedAt) => {
   return addDays(new Date(borrowedAt), 14);
 };
 
-/**
- * Calculate overdue days
- */
 const calculateOverdueDays = (dueDate, returnDate = new Date()) => {
   const due = new Date(dueDate);
   const returned = new Date(returnDate);

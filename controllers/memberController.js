@@ -3,13 +3,8 @@ const {
   getMemberBorrowedBooks: getMemberBorrowedBooksService,
 } = require("../services/memberService");
 
-/**
- * Member controller
- */
 
-/**
- * Create a new member
- */
+
 const createMember = async (req, res) => {
   try {
     const member = await Member.create(req.body);

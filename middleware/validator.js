@@ -14,9 +14,8 @@ const handleValidationErrors = (req, res, next) => {
   next();
 };
 
-/**
- * Book validation rules
- */
+
+
 const bookValidationRules = {
   create: [
     body("isbn")

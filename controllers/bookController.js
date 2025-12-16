@@ -1,13 +1,6 @@
 const { Book } = require("../models");
 const { getAvailableBooks } = require("../services/bookService");
 
-/**
- * Book controller
- */
-
-/**
- * Create a new book
- */
 const createBook = async (req, res) => {
   try {
     const book = await Book.create(req.body);

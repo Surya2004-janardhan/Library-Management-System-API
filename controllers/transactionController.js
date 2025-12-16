@@ -5,13 +5,9 @@ const {
   updateOverdueStatuses: updateOverdueStatusesService,
 } = require("../services/transactionService");
 
-/**
- * Transaction controller
- */
 
-/**
- * Borrow a book
- */
+
+
 const borrowBook = async (req, res) => {
   try {
     const { member_id, book_id } = req.body;

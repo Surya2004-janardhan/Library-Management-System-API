@@ -1,13 +1,7 @@
 const { Member, Transaction, Fine } = require("../models");
 const { Op } = require("sequelize");
 
-/**
- * Member service for status management
- */
 
-/**
- * Suspend member
- */
 const suspendMember = async (memberId, transaction = null) => {
   const member = await Member.findByPk(memberId, { transaction });
 
