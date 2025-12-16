@@ -14,20 +14,22 @@ const handleValidationErrors = (req, res, next) => {
   next();
 };
 
-
-
 const bookValidationRules = {
   create: [
     body("isbn")
-      .isLength({ min: 10, max: 13 })
-      .withMessage("ISBN must be 10-13 characters"),
+      .notEmpty()
+      .withMessage("ISBN is required")
+      .isLength({ min: 10, max: 20 })
+      .withMessage("ISBN must be 10-20 characters"),
     body("title").notEmpty().withMessage("Title is required"),
     body("author").notEmpty().withMessage("Author is required"),
-    body("category").notEmpty().withMessage("Category is required"),
+    body("category").optional(),
     body("total_copies")
+      .optional()
       .isInt({ min: 1 })
       .withMessage("Total copies must be at least 1"),
     body("available_copies")
+      .optional()
       .isInt({ min: 0 })
       .withMessage("Available copies must be 0 or more"),
   ],
@@ -35,14 +37,11 @@ const bookValidationRules = {
     param("id").isInt().withMessage("Invalid book ID"),
     body("isbn")
       .optional()
-      .isLength({ min: 10, max: 13 })
-      .withMessage("ISBN must be 10-13 characters"),
+      .isLength({ min: 10, max: 20 })
+      .withMessage("ISBN must be 10-20 characters"),
     body("title").optional().notEmpty().withMessage("Title cannot be empty"),
     body("author").optional().notEmpty().withMessage("Author cannot be empty"),
-    body("category")
-      .optional()
-      .notEmpty()
-      .withMessage("Category cannot be empty"),
+    body("category").optional(),
     body("status")
       .optional()
       .isIn(["available", "borrowed", "reserved", "maintenance"])
@@ -81,7 +80,6 @@ const memberValidationRules = {
   ],
 };
 
-
 const transactionValidationRules = {
   borrow: [
     body("member_id").isInt().withMessage("Valid member ID is required"),
@@ -89,7 +87,6 @@ const transactionValidationRules = {
   ],
   return: [param("id").isInt().withMessage("Invalid transaction ID")],
 };
-
 
 const fineValidationRules = {
   pay: [param("id").isInt().withMessage("Invalid fine ID")],

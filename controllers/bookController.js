@@ -3,7 +3,12 @@ const { getAvailableBooks } = require("../services/bookService");
 
 const createBook = async (req, res) => {
   try {
-    const book = await Book.create(req.body);
+    const bookData = { ...req.body };
+    // Set available_copies to total_copies if not provided
+    if (!bookData.available_copies && bookData.total_copies) {
+      bookData.available_copies = bookData.total_copies;
+    }
+    const book = await Book.create(bookData);
     res.status(201).json({
       success: true,
       data: book,

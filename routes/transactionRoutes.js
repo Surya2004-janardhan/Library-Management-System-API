@@ -18,13 +18,13 @@ router.post(
   handleValidationErrors,
   borrowBook
 );
-router.post(
+router.put(
   "/transactions/:id/return",
   transactionValidationRules.return,
   handleValidationErrors,
   returnBook
 );
 router.get("/transactions/overdue", getOverdueTransactions);
-router.post("/transactions/update-overdue", updateOverdueStatuses);
+router.put("/transactions/update-overdue", updateOverdueStatuses);
 
 module.exports = router;
