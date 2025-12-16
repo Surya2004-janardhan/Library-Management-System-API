@@ -98,7 +98,7 @@ const updateBook = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      data: book,
+      data: updatedBook,
     });
   } catch (error) {
     res.status(400).json({
@@ -113,7 +113,7 @@ const updateBook = async (req, res) => {
  */
 const deleteBook = async (req, res) => {
   try {
-    const book = await Book.findByPk(req.params.id);
+    const book = await BookModel.remove(req.params.id);
 
     if (!book) {
       return res.status(404).json({
@@ -122,11 +122,10 @@ const deleteBook = async (req, res) => {
       });
     }
 
-    await book.destroy();
-
     res.status(200).json({
       success: true,
       message: "Book deleted successfully",
+      data: book,
     });
   } catch (error) {
     res.status(500).json({
