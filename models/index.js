@@ -1,0 +1,56 @@
+const { sequelize } = require("../config/database");
+
+// Import models
+const Book = require("./Book");
+const Member = require("./Member");
+const Transaction = require("./Transaction");
+const Fine = require("./Fine");
+
+// Define associations
+Book.hasMany(Transaction, {
+  foreignKey: "book_id",
+  as: "transactions",
+});
+
+Transaction.belongsTo(Book, {
+  foreignKey: "book_id",
+  as: "book",
+});
+
+Member.hasMany(Transaction, {
+  foreignKey: "member_id",
+  as: "transactions",
+});
+
+Transaction.belongsTo(Member, {
+  foreignKey: "member_id",
+  as: "member",
+});
+
+Member.hasMany(Fine, {
+  foreignKey: "member_id",
+  as: "fines",
+});
+
+Fine.belongsTo(Member, {
+  foreignKey: "member_id",
+  as: "member",
+});
+
+Transaction.hasOne(Fine, {
+  foreignKey: "transaction_id",
+  as: "fine",
+});
+
+Fine.belongsTo(Transaction, {
+  foreignKey: "transaction_id",
+  as: "transaction",
+});
+
+module.exports = {
+  sequelize,
+  Book,
+  Member,
+  Transaction,
+  Fine,
+};
