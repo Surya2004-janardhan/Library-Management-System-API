@@ -9,8 +9,8 @@ const { query } = require("../config/database");
  */
 const canMemberBorrow = async (memberId) => {
   const result = await query(
-    'SELECT COUNT(*) FROM transactions WHERE member_id = $1 AND status IN ($2, $3)',
-    [memberId, 'active', 'overdue']
+    "SELECT COUNT(*) FROM transactions WHERE member_id = $1 AND status IN ($2, $3)",
+    [memberId, "active", "overdue"]
   );
 
   const activeTransactions = parseInt(result.rows[0].count);

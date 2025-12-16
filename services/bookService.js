@@ -1,6 +1,5 @@
 const { query, pool } = require("../config/database");
 
-
 const VALID_TRANSITIONS = {
   available: ["borrowed", "maintenance"],
   borrowed: ["available"],
@@ -21,9 +20,9 @@ const canTransitionTo = (currentStatus, newStatus) => {
  */
 const updateBookStatus = async (bookId, newStatus, client = null) => {
   const queryFn = client ? (text, params) => client.query(text, params) : query;
-  
-  const result = await queryFn('SELECT * FROM books WHERE id = $1', [bookId]);
-  
+
+  const result = await queryFn("SELECT * FROM books WHERE id = $1", [bookId]);
+
   if (result.rows.length === 0) {
     throw new Error("Book not found");
   }
@@ -37,7 +36,7 @@ const updateBookStatus = async (bookId, newStatus, client = null) => {
   }
 
   const updated = await queryFn(
-    'UPDATE books SET status = $1 WHERE id = $2 RETURNING *',
+    "UPDATE books SET status = $1 WHERE id = $2 RETURNING *",
     [newStatus, bookId]
   );
 
@@ -49,8 +48,8 @@ const updateBookStatus = async (bookId, newStatus, client = null) => {
  */
 const decrementAvailableCopies = async (bookId, client = null) => {
   const queryFn = client ? (text, params) => client.query(text, params) : query;
-  
-  const result = await queryFn('SELECT * FROM books WHERE id = $1', [bookId]);
+
+  const result = await queryFn("SELECT * FROM books WHERE id = $1", [bookId]);
 
   if (result.rows.length === 0) {
     throw new Error("Book not found");
@@ -66,7 +65,7 @@ const decrementAvailableCopies = async (bookId, client = null) => {
   const newStatus = newAvailableCopies === 0 ? "borrowed" : book.status;
 
   const updated = await queryFn(
-    'UPDATE books SET available_copies = $1, status = $2 WHERE id = $3 RETURNING *',
+    "UPDATE books SET available_copies = $1, status = $2 WHERE id = $3 RETURNING *",
     [newAvailableCopies, newStatus, bookId]
   );
 
@@ -78,8 +77,8 @@ const decrementAvailableCopies = async (bookId, client = null) => {
  */
 const incrementAvailableCopies = async (bookId, client = null) => {
   const queryFn = client ? (text, params) => client.query(text, params) : query;
-  
-  const result = await queryFn('SELECT * FROM books WHERE id = $1', [bookId]);
+
+  const result = await queryFn("SELECT * FROM books WHERE id = $1", [bookId]);
 
   if (result.rows.length === 0) {
     throw new Error("Book not found");
@@ -87,10 +86,13 @@ const incrementAvailableCopies = async (bookId, client = null) => {
 
   const book = result.rows[0];
   const newAvailableCopies = book.available_copies + 1;
-  const newStatus = newAvailableCopies > 0 && book.status === "borrowed" ? "available" : book.status;
+  const newStatus =
+    newAvailableCopies > 0 && book.status === "borrowed"
+      ? "available"
+      : book.status;
 
   const updated = await queryFn(
-    'UPDATE books SET available_copies = $1, status = $2 WHERE id = $3 RETURNING *',
+    "UPDATE books SET available_copies = $1, status = $2 WHERE id = $3 RETURNING *",
     [newAvailableCopies, newStatus, bookId]
   );
 
@@ -101,7 +103,7 @@ const incrementAvailableCopies = async (bookId, client = null) => {
  * Get all available books
  */
 const getAvailableBooks = async () => {
-  const result = await query('SELECT * FROM books WHERE available_copies > 0');
+  const result = await query("SELECT * FROM books WHERE available_copies > 0");
   return result.rows;
 };
 
