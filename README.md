@@ -214,6 +214,5 @@ curl -X POST http://localhost:3000/api/transactions/1/return
 └── config/          # Database config
 ```
 
-## License
 
-MIT
+
