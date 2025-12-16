@@ -1,5 +1,4 @@
-const { Book } = require("../models");
-const { sequelize } = require("../config/database");
+const { query, pool } = require("../config/database");
 
 
 const VALID_TRANSITIONS = {
@@ -20,12 +19,16 @@ const canTransitionTo = (currentStatus, newStatus) => {
 /**
  * Update book status with validation
  */
-const updateBookStatus = async (bookId, newStatus, transaction = null) => {
-  const book = await Book.findByPk(bookId, { transaction });
-
-  if (!book) {
+const updateBookStatus = async (bookId, newStatus, client = null) => {
+  const queryFn = client ? (text, params) => client.query(text, params) : query;
+  
+  const result = await queryFn('SELECT * FROM books WHERE id = $1', [bookId]);
+  
+  if (result.rows.length === 0) {
     throw new Error("Book not found");
   }
+
+  const book = result.rows[0];
 
   if (!canTransitionTo(book.status, newStatus)) {
     throw new Error(
@@ -33,67 +36,73 @@ const updateBookStatus = async (bookId, newStatus, transaction = null) => {
     );
   }
 
-  book.status = newStatus;
-  await book.save({ transaction });
+  const updated = await queryFn(
+    'UPDATE books SET status = $1 WHERE id = $2 RETURNING *',
+    [newStatus, bookId]
+  );
 
-  return book;
+  return updated.rows[0];
 };
 
 /**
  * Decrement available copies when borrowing
  */
-const decrementAvailableCopies = async (bookId, transaction = null) => {
-  const book = await Book.findByPk(bookId, { transaction });
+const decrementAvailableCopies = async (bookId, client = null) => {
+  const queryFn = client ? (text, params) => client.query(text, params) : query;
+  
+  const result = await queryFn('SELECT * FROM books WHERE id = $1', [bookId]);
 
-  if (!book) {
+  if (result.rows.length === 0) {
     throw new Error("Book not found");
   }
+
+  const book = result.rows[0];
 
   if (book.available_copies <= 0) {
     throw new Error("No available copies");
   }
 
-  book.available_copies -= 1;
+  const newAvailableCopies = book.available_copies - 1;
+  const newStatus = newAvailableCopies === 0 ? "borrowed" : book.status;
 
-  // Update status to borrowed if no more copies available
-  if (book.available_copies === 0) {
-    book.status = "borrowed";
-  }
+  const updated = await queryFn(
+    'UPDATE books SET available_copies = $1, status = $2 WHERE id = $3 RETURNING *',
+    [newAvailableCopies, newStatus, bookId]
+  );
 
-  await book.save({ transaction });
-  return book;
+  return updated.rows[0];
 };
 
 /**
  * Increment available copies when returning
  */
-const incrementAvailableCopies = async (bookId, transaction = null) => {
-  const book = await Book.findByPk(bookId, { transaction });
+const incrementAvailableCopies = async (bookId, client = null) => {
+  const queryFn = client ? (text, params) => client.query(text, params) : query;
+  
+  const result = await queryFn('SELECT * FROM books WHERE id = $1', [bookId]);
 
-  if (!book) {
+  if (result.rows.length === 0) {
     throw new Error("Book not found");
   }
 
-  book.available_copies += 1;
+  const book = result.rows[0];
+  const newAvailableCopies = book.available_copies + 1;
+  const newStatus = newAvailableCopies > 0 && book.status === "borrowed" ? "available" : book.status;
 
-  // Update status to available if copies are now available
-  if (book.available_copies > 0 && book.status === "borrowed") {
-    book.status = "available";
-  }
+  const updated = await queryFn(
+    'UPDATE books SET available_copies = $1, status = $2 WHERE id = $3 RETURNING *',
+    [newAvailableCopies, newStatus, bookId]
+  );
 
-  await book.save({ transaction });
-  return book;
+  return updated.rows[0];
 };
 
 /**
  * Get all available books
  */
 const getAvailableBooks = async () => {
-  return await Book.findAll({
-    where: {
-      available_copies: { [sequelize.Sequelize.Op.gt]: 0 },
-    },
-  });
+  const result = await query('SELECT * FROM books WHERE available_copies > 0');
+  return result.rows;
 };
 
 module.exports = {

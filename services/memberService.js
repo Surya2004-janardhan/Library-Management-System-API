@@ -1,73 +1,88 @@
-const { Member, Transaction, Fine } = require("../models");
-const { Op } = require("sequelize");
+const { query } = require("../config/database");
 
+/**
+ * Member service for status management
+ */
 
-const suspendMember = async (memberId, transaction = null) => {
-  const member = await Member.findByPk(memberId, { transaction });
+/**
+ * Suspend member
+ */
+const suspendMember = async (memberId, client = null) => {
+  const queryFn = client ? (text, params) => client.query(text, params) : query;
+  
+  const result = await queryFn(
+    'UPDATE members SET status = $1 WHERE id = $2 RETURNING *',
+    ['suspended', memberId]
+  );
 
-  if (!member) {
+  if (result.rows.length === 0) {
     throw new Error("Member not found");
   }
 
-  member.status = "suspended";
-  await member.save({ transaction });
-
-  return member;
+  return result.rows[0];
 };
 
 /**
  * Activate member
  */
-const activateMember = async (memberId, transaction = null) => {
-  const member = await Member.findByPk(memberId, { transaction });
+const activateMember = async (memberId, client = null) => {
+  const queryFn = client ? (text, params) => client.query(text, params) : query;
+  
+  const result = await queryFn(
+    'UPDATE members SET status = $1 WHERE id = $2 RETURNING *',
+    ['active', memberId]
+  );
 
-  if (!member) {
+  if (result.rows.length === 0) {
     throw new Error("Member not found");
   }
 
-  member.status = "active";
-  await member.save({ transaction });
-
-  return member;
+  return result.rows[0];
 };
 
 /**
  * Check and update member suspension status
  */
-const checkAndUpdateSuspension = async (memberId, transaction = null) => {
-  const overdueCount = await Transaction.count({
-    where: {
-      member_id: memberId,
-      status: "overdue",
-    },
-    transaction,
-  });
+const checkAndUpdateSuspension = async (memberId, client = null) => {
+  const queryFn = client ? (text, params) => client.query(text, params) : query;
+  
+  const overdueResult = await queryFn(
+    'SELECT COUNT(*) FROM transactions WHERE member_id = $1 AND status = $2',
+    [memberId, 'overdue']
+  );
+  const overdueCount = parseInt(overdueResult.rows[0].count);
 
-  const member = await Member.findByPk(memberId, { transaction });
+  const memberResult = await queryFn('SELECT * FROM members WHERE id = $1', [memberId]);
 
-  if (!member) {
+  if (memberResult.rows.length === 0) {
     throw new Error("Member not found");
   }
 
+  let member = memberResult.rows[0];
+
   // Suspend if 3 or more overdue books
   if (overdueCount >= 3 && member.status === "active") {
-    member.status = "suspended";
-    await member.save({ transaction });
+    const updated = await queryFn(
+      'UPDATE members SET status = $1 WHERE id = $2 RETURNING *',
+      ['suspended', memberId]
+    );
+    member = updated.rows[0];
   }
 
   // Activate if less than 3 overdue books and no unpaid fines
   if (overdueCount < 3 && member.status === "suspended") {
-    const unpaidFines = await Fine.count({
-      where: {
-        member_id: memberId,
-        paid_at: null,
-      },
-      transaction,
-    });
+    const finesResult = await queryFn(
+      'SELECT COUNT(*) FROM fines WHERE member_id = $1 AND paid_at IS NULL',
+      [memberId]
+    );
+    const unpaidFines = parseInt(finesResult.rows[0].count);
 
     if (unpaidFines === 0) {
-      member.status = "active";
-      await member.save({ transaction });
+      const updated = await queryFn(
+        'UPDATE members SET status = $1 WHERE id = $2 RETURNING *',
+        ['active', memberId]
+      );
+      member = updated.rows[0];
     }
   }
 
@@ -78,13 +93,15 @@ const checkAndUpdateSuspension = async (memberId, transaction = null) => {
  * Get books borrowed by member
  */
 const getMemberBorrowedBooks = async (memberId) => {
-  return await Transaction.findAll({
-    where: {
-      member_id: memberId,
-      status: { [Op.in]: ["active", "overdue"] },
-    },
-    include: ["book"],
-  });
+  const result = await query(
+    `SELECT t.*, 
+            b.id as book_id, b.isbn, b.title, b.author, b.category, b.status as book_status
+     FROM transactions t
+     JOIN books b ON t.book_id = b.id
+     WHERE t.member_id = $1 AND t.status IN ('active', 'overdue')`,
+    [memberId]
+  );
+  return result.rows;
 };
 
 module.exports = {

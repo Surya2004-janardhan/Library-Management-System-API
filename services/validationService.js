@@ -1,13 +1,19 @@
-const { Book, Member, Transaction, Fine } = require("../models");
-const { Op } = require("sequelize");
+const { query } = require("../config/database");
 
+/**
+ * Validation service for business rules
+ */
+
+/**
+ * Check if member can borrow books (max 3 books)
+ */
 const canMemberBorrow = async (memberId) => {
-  const activeTransactions = await Transaction.count({
-    where: {
-      member_id: memberId,
-      status: { [Op.in]: ["active", "overdue"] },
-    },
-  });
+  const result = await query(
+    'SELECT COUNT(*) FROM transactions WHERE member_id = $1 AND status IN ($2, $3)',
+    [memberId, 'active', 'overdue']
+  );
+
+  const activeTransactions = parseInt(result.rows[0].count);
 
   if (activeTransactions >= 3) {
     return {
