@@ -59,7 +59,7 @@ const getAvailableBooksController = async (req, res) => {
  */
 const getBookById = async (req, res) => {
   try {
-    const book = await Book.findByPk(req.params.id);
+    const book = await BookModel.findById(req.params.id);
 
     if (!book) {
       return res.status(404).json({
@@ -85,7 +85,7 @@ const getBookById = async (req, res) => {
  */
 const updateBook = async (req, res) => {
   try {
-    const book = await Book.findByPk(req.params.id);
+    const book = await BookModel.findById(req.params.id);
 
     if (!book) {
       return res.status(404).json({
@@ -94,7 +94,7 @@ const updateBook = async (req, res) => {
       });
     }
 
-    await book.update(req.body);
+    const updatedBook = await BookModel.update(req.params.id, req.body);
 
     res.status(200).json({
       success: true,

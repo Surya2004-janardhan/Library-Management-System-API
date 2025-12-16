@@ -57,7 +57,9 @@ const validateBorrowing = async (memberId, bookId) => {
   // Check if member can borrow more books
   const canBorrow = await canMemberBorrow(memberId);
   if (!canBorrow) {
-    errors.push(`Member has reached the maximum limit of ${MAX_BOOKS_PER_MEMBER} books`);
+    errors.push(
+      `Member has reached the maximum limit of ${MAX_BOOKS_PER_MEMBER} books`
+    );
   }
 
   // Check if member has unpaid fines
