@@ -46,23 +46,27 @@ A RESTful API for managing library operations using **pure SQL with PostgreSQL**
 The system uses PostgreSQL with the following tables:
 
 ### Books
+
 - `id`, `isbn`, `title`, `author`, `category`
 - `total_copies`, `available_copies`, `status`
 - **State Machine**: available → borrowed → available
 - **Indexes**: isbn, title, status
 
 ### Members
+
 - `id`, `name`, `email`, `membership_number`, `status`
 - **Auto-suspension**: At 3+ overdue books
 - **Index**: email (unique)
 
 ### Transactions
+
 - `id`, `member_id`, `book_id`, `borrowed_at`, `due_date`, `returned_at`, `status`
 - **Loan Period**: 14 days
 - **Statuses**: active, overdue, completed
 - **Indexes**: member_id, book_id, status, due_date
 
 ### Fines
+
 - `id`, `member_id`, `transaction_id`, `amount`, `paid_at`
 - **Rate**: $0.50 per day overdue
 - **Index**: member_id, paid_at
@@ -75,14 +79,14 @@ Each model provides clean CRUD operations:
 // Example: bookModel.js
 const create = async (bookData) => {
   const result = await query(
-    'INSERT INTO books (isbn, title, author) VALUES ($1, $2, $3) RETURNING *',
+    "INSERT INTO books (isbn, title, author) VALUES ($1, $2, $3) RETURNING *",
     [bookData.isbn, bookData.title, bookData.author]
   );
   return result.rows[0];
 };
 
 const findById = async (id) => {
-  const result = await query('SELECT * FROM books WHERE id = $1', [id]);
+  const result = await query("SELECT * FROM books WHERE id = $1", [id]);
   return result.rows[0] || null;
 };
 
@@ -91,7 +95,9 @@ const update = async (id, bookData) => {
   const fields = Object.keys(bookData).map((key, i) => `${key} = $${i + 1}`);
   const values = [...Object.values(bookData), id];
   const result = await query(
-    `UPDATE books SET ${fields.join(', ')} WHERE id = $${values.length} RETURNING *`,
+    `UPDATE books SET ${fields.join(", ")} WHERE id = $${
+      values.length
+    } RETURNING *`,
     values
   );
   return result.rows[0];
@@ -101,15 +107,18 @@ const update = async (id, bookData) => {
 ## Setup Instructions
 
 ### 1. Prerequisites
+
 - Node.js v18+
 - PostgreSQL 12+
 
 ### 2. Install Dependencies
+
 ```bash
 npm install
 ```
 
 ### 3. Database Setup
+
 ```bash
 # Create PostgreSQL database
 createdb library_management
@@ -120,6 +129,7 @@ CREATE DATABASE library_management;
 ```
 
 ### 4. Configure Environment
+
 ```bash
 cp .env.example .env
 # Edit .env with your database credentials
@@ -137,6 +147,7 @@ INIT_DB=true
 ```
 
 ### 5. Initialize Database Schema
+
 ```bash
 # Option 1: Automatic (on first run)
 # Set INIT_DB=true in .env
@@ -147,6 +158,7 @@ psql -U postgres -d library_management -f config/schema.sql
 ```
 
 ### 6. Run the Server
+
 ```bash
 # Development mode (with nodemon)
 npm run dev
@@ -160,6 +172,7 @@ Server runs on: `http://localhost:3000`
 ## API Endpoints
 
 ### Books
+
 - `POST /api/books` - Create book
 - `GET /api/books` - Get all books
 - `GET /api/books/available` - Get available books
@@ -168,6 +181,7 @@ Server runs on: `http://localhost:3000`
 - `DELETE /api/books/:id` - Delete book
 
 ### Members
+
 - `POST /api/members` - Create member
 - `GET /api/members` - Get all members
 - `GET /api/members/:id` - Get member by ID
@@ -176,12 +190,14 @@ Server runs on: `http://localhost:3000`
 - `DELETE /api/members/:id` - Delete member
 
 ### Transactions
+
 - `POST /api/transactions/borrow` - Borrow a book
 - `PUT /api/transactions/:id/return` - Return a book
 - `GET /api/transactions/overdue` - Get overdue transactions
 - `PUT /api/transactions/update-overdue` - Update overdue statuses
 
 ### Fines
+
 - `GET /api/fines` - Get all fines
 - `GET /api/fines/members/:memberId` - Get member's fines
 - `PUT /api/fines/:id/pay` - Pay a fine
@@ -198,6 +214,7 @@ Server runs on: `http://localhost:3000`
 ## Example Requests
 
 ### Borrow a Book
+
 ```bash
 POST /api/transactions/borrow
 Content-Type: application/json
@@ -209,17 +226,20 @@ Content-Type: application/json
 ```
 
 **Validation Checks**:
+
 - Member is active (not suspended)
 - Member has < 3 active borrows
 - Member has no unpaid fines
 - Book is available
 
 ### Return a Book
+
 ```bash
 PUT /api/transactions/1/return
 ```
 
 **Automatic Processing**:
+
 - Increments available book copies
 - Calculates overdue days
 - Creates fine if overdue ($0.50/day)
@@ -248,15 +268,17 @@ const findByIdWithDetails = async (id) => {
 const borrowBook = async (memberId, bookId) => {
   const client = await pool.connect();
   try {
-    await client.query('BEGIN');
-    
+    await client.query("BEGIN");
+
     // Multiple queries within transaction
-    await client.query('UPDATE books SET available_copies = available_copies - 1...');
-    await client.query('INSERT INTO transactions...');
-    
-    await client.query('COMMIT');
+    await client.query(
+      "UPDATE books SET available_copies = available_copies - 1..."
+    );
+    await client.query("INSERT INTO transactions...");
+
+    await client.query("COMMIT");
   } catch (error) {
-    await client.query('ROLLBACK');
+    await client.query("ROLLBACK");
     throw error;
   } finally {
     client.release();
@@ -294,7 +316,7 @@ All errors return consistent JSON format:
 
 ```javascript
 // config/database.js
-const { Pool } = require('pg');
+const { Pool } = require("pg");
 
 const pool = new Pool({
   host: process.env.DB_HOST,

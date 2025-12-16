@@ -11,7 +11,6 @@ const memberRoutes = require("./routes/memberRoutes");
 const transactionRoutes = require("./routes/transactionRoutes");
 const fineRoutes = require("./routes/fineRoutes");
 
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -40,7 +39,7 @@ app.use("/api", memberRoutes);
 app.use("/api", transactionRoutes);
 app.use("/api", fineRoutes);
 
-// 404 handler --- 
+// 404 handler ---
 app.use(notFoundHandler);
 
 // Error handler
