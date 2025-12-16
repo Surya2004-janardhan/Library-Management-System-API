@@ -1,8 +1,6 @@
 const express = require("express");
-const fs = require("fs");
-const path = require("path");
 require("dotenv").config();
-const { pool } = require("./config/database");
+const { sequelize, testConnection } = require("./config/database");
 const { errorHandler, notFoundHandler } = require("./middleware/errorHandler");
 
 // Import routes
@@ -10,6 +8,9 @@ const bookRoutes = require("./routes/bookRoutes");
 const memberRoutes = require("./routes/memberRoutes");
 const transactionRoutes = require("./routes/transactionRoutes");
 const fineRoutes = require("./routes/fineRoutes");
+
+// Import models to ensure associations are set up
+require("./models");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -45,30 +46,15 @@ app.use(notFoundHandler);
 // Error handler
 app.use(errorHandler);
 
-// Initialize database schema
-const initializeDatabase = async () => {
-  try {
-    const schemaPath = path.join(__dirname, "config", "schema.sql");
-    const schema = fs.readFileSync(schemaPath, "utf8");
-    await pool.query(schema);
-    console.log("✓ Database schema initialized successfully");
-  } catch (error) {
-    console.error("✗ Database initialization failed:", error.message);
-    throw error;
-  }
-};
-
 // Database connection and server start
 const startServer = async () => {
   try {
     // Test database connection
-    await pool.query("SELECT NOW()");
-    console.log("✓ Database connection established");
+    await testConnection();
 
-    // Initialize database schema (only if tables don't exist)
-    if (process.env.INIT_DB === "true") {
-      await initializeDatabase();
-    }
+    // Sync database (create tables if they don't exist)
+    await sequelize.sync({ alter: process.env.NODE_ENV === "development" });
+    console.log("✓ Database synchronized successfully");
 
     // Start server
     app.listen(PORT, () => {

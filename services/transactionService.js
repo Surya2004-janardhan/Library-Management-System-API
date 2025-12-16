@@ -1,6 +1,9 @@
 const { sequelize, Transaction, Book, Member, Fine } = require("../models");
 const { Op } = require("sequelize");
-const { calculateDueDate, calculateOverdueDays } = require("../utils/dateUtils");
+const {
+  calculateDueDate,
+  calculateOverdueDays,
+} = require("../utils/dateUtils");
 const { validateBorrowing } = require("./validationService");
 const { checkAndUpdateSuspension } = require("./memberService");
 
