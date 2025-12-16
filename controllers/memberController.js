@@ -3,8 +3,6 @@ const {
   getMemberBorrowedBooks: getMemberBorrowedBooksService,
 } = require("../services/memberService");
 
-
-
 const createMember = async (req, res) => {
   try {
     const member = await MemberModel.create(req.body);
