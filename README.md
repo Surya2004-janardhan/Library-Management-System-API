@@ -75,21 +75,21 @@ npm run dev
 - `POST /api/members` - Register member
 - `GET /api/members` - All members
 - `GET /api/members/:id` - Get member
-- `GET /api/members/:id/books` - Member's borrowed books
+- `GET /api/members/:id/borrowed` - Member's borrowed books
 - `PUT /api/members/:id` - Update member
 - `DELETE /api/members/:id` - Delete member
 
 ### Transactions
 
 - `POST /api/transactions/borrow` - Borrow book
-- `PUT /api/transactions/:id/return` - Return book
+- `POST /api/transactions/:id/return` - Return book
 - `GET /api/transactions/overdue` - Overdue transactions
 
 ### Fines
 
 - `GET /api/fines` - All fines
 - `GET /api/fines/members/:id` - Member's fines
-- `PUT /api/fines/:id/pay` - Pay fine
+- `POST /api/fines/:id/pay` - Pay fine
 
 ## Sequelize Examples
 
@@ -192,7 +192,7 @@ curl -X POST http://localhost:3000/api/transactions/borrow \
 ### Return a Book
 
 ```bash
-curl -X PUT http://localhost:3000/api/transactions/1/return
+curl -X POST http://localhost:3000/api/transactions/1/return
 ```
 
 **What Happens**:
