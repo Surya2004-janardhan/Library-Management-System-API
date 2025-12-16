@@ -1,11 +1,11 @@
-const MemberModel = require("../models/memberModel");
+const { Member } = require("../models");
 const {
   getMemberBorrowedBooks: getMemberBorrowedBooksService,
 } = require("../services/memberService");
 
 const createMember = async (req, res) => {
   try {
-    const member = await MemberModel.create(req.body);
+    const member = await Member.create(req.body);
     res.status(201).json({
       success: true,
       data: member,
@@ -23,7 +23,7 @@ const createMember = async (req, res) => {
  */
 const getAllMembers = async (req, res) => {
   try {
-    const members = await MemberModel.findAll();
+    const members = await Member.findAll();
     res.status(200).json({
       success: true,
       count: members.length,
@@ -42,7 +42,7 @@ const getAllMembers = async (req, res) => {
  */
 const getMemberById = async (req, res) => {
   try {
-    const member = await MemberModel.findById(req.params.id);
+    const member = await Member.findByPk(req.params.id);
 
     if (!member) {
       return res.status(404).json({
@@ -88,7 +88,7 @@ const getMemberBorrowedBooks = async (req, res) => {
  */
 const updateMember = async (req, res) => {
   try {
-    const member = await MemberModel.findById(req.params.id);
+    const member = await Member.findByPk(req.params.id);
 
     if (!member) {
       return res.status(404).json({
@@ -97,7 +97,7 @@ const updateMember = async (req, res) => {
       });
     }
 
-    const updatedMember = await MemberModel.update(req.params.id, req.body);
+    const updatedMember = await member.update(req.body);
 
     res.status(200).json({
       success: true,
@@ -116,8 +116,7 @@ const updateMember = async (req, res) => {
  */
 const deleteMember = async (req, res) => {
   try {
-    const member = await MemberModel.remove(req.params.id);
-
+    const member = await Member.findByPk(req.params.id);
     if (!member) {
       return res.status(404).json({
         success: false,
@@ -125,10 +124,11 @@ const deleteMember = async (req, res) => {
       });
     }
 
+    await member.destroy();
+
     res.status(200).json({
       success: true,
       message: "Member deleted successfully",
-      data: member,
     });
   } catch (error) {
     res.status(500).json({
@@ -146,3 +146,4 @@ module.exports = {
   updateMember,
   deleteMember,
 };
+

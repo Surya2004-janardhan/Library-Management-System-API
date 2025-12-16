@@ -1,9 +1,9 @@
-const BookModel = require("../models/bookModel");
+const { Book } = require("../models");
 const { getAvailableBooks } = require("../services/bookService");
 
 const createBook = async (req, res) => {
   try {
-    const book = await BookModel.create(req.body);
+    const book = await Book.create(req.body);
     res.status(201).json({
       success: true,
       data: book,
@@ -21,7 +21,7 @@ const createBook = async (req, res) => {
  */
 const getAllBooks = async (req, res) => {
   try {
-    const books = await BookModel.findAll();
+    const books = await Book.findAll();
     res.status(200).json({
       success: true,
       count: books.length,
@@ -59,7 +59,7 @@ const getAvailableBooksController = async (req, res) => {
  */
 const getBookById = async (req, res) => {
   try {
-    const book = await BookModel.findById(req.params.id);
+    const book = await Book.findByPk(req.params.id);
 
     if (!book) {
       return res.status(404).json({
@@ -85,7 +85,7 @@ const getBookById = async (req, res) => {
  */
 const updateBook = async (req, res) => {
   try {
-    const book = await BookModel.findById(req.params.id);
+    const book = await Book.findByPk(req.params.id);
 
     if (!book) {
       return res.status(404).json({
@@ -94,11 +94,11 @@ const updateBook = async (req, res) => {
       });
     }
 
-    const updatedBook = await BookModel.update(req.params.id, req.body);
+    await book.update(req.body);
 
     res.status(200).json({
       success: true,
-      data: updatedBook,
+      data: book,
     });
   } catch (error) {
     res.status(400).json({
@@ -113,7 +113,7 @@ const updateBook = async (req, res) => {
  */
 const deleteBook = async (req, res) => {
   try {
-    const book = await BookModel.remove(req.params.id);
+    const book = await Book.findByPk(req.params.id);
 
     if (!book) {
       return res.status(404).json({
@@ -122,10 +122,11 @@ const deleteBook = async (req, res) => {
       });
     }
 
+    await book.destroy();
+
     res.status(200).json({
       success: true,
       message: "Book deleted successfully",
-      data: book,
     });
   } catch (error) {
     res.status(500).json({
