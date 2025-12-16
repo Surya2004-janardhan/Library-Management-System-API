@@ -4,7 +4,6 @@ const { getAvailableBooks } = require("../services/bookService");
 const createBook = async (req, res) => {
   try {
     const bookData = { ...req.body };
-    // Set available_copies to total_copies if not provided
     if (!bookData.available_copies && bookData.total_copies) {
       bookData.available_copies = bookData.total_copies;
     }
@@ -21,9 +20,6 @@ const createBook = async (req, res) => {
   }
 };
 
-/**
- * Get all books
- */
 const getAllBooks = async (req, res) => {
   try {
     const books = await Book.findAll();
@@ -40,9 +36,6 @@ const getAllBooks = async (req, res) => {
   }
 };
 
-/**
- * Get available books
- */
 const getAvailableBooksController = async (req, res) => {
   try {
     const books = await getAvailableBooks();
@@ -59,9 +52,6 @@ const getAvailableBooksController = async (req, res) => {
   }
 };
 
-/**
- * Get book by ID
- */
 const getBookById = async (req, res) => {
   try {
     const book = await Book.findByPk(req.params.id);
@@ -85,9 +75,6 @@ const getBookById = async (req, res) => {
   }
 };
 
-/**
- * Update book
- */
 const updateBook = async (req, res) => {
   try {
     const book = await Book.findByPk(req.params.id);
@@ -113,9 +100,6 @@ const updateBook = async (req, res) => {
   }
 };
 
-/**
- * Delete book
- */
 const deleteBook = async (req, res) => {
   try {
     const book = await Book.findByPk(req.params.id);

@@ -1,12 +1,5 @@
 const { Book } = require("../models");
 
-/**
- * Book Service - Handles book availability and state management using Sequelize ORM
- * State Machine: available -> borrowed -> available
- *                available -> maintenance -> available
- */
-
-// Valid state transitions for books
 const VALID_TRANSITIONS = {
   available: ["borrowed", "maintenance", "reserved"],
   borrowed: ["available"],
@@ -14,17 +7,11 @@ const VALID_TRANSITIONS = {
   reserved: ["borrowed", "available"],
 };
 
-/**
- * Check if state transition is valid
- */
 const canTransitionTo = (currentStatus, newStatus) => {
   const validStates = VALID_TRANSITIONS[currentStatus];
   return validStates && validStates.includes(newStatus);
 };
 
-/**
- * Update book status with validation
- */
 const updateBookStatus = async (bookId, newStatus) => {
   const book = await Book.findByPk(bookId);
 
@@ -42,9 +29,6 @@ const updateBookStatus = async (bookId, newStatus) => {
   return book;
 };
 
-/**
- * Decrement available copies when borrowing
- */
 const decrementAvailableCopies = async (bookId) => {
   const book = await Book.findByPk(bookId);
 
@@ -67,9 +51,6 @@ const decrementAvailableCopies = async (bookId) => {
   return book;
 };
 
-/**
- * Increment available copies when returning
- */
 const incrementAvailableCopies = async (bookId) => {
   const book = await Book.findByPk(bookId);
 
@@ -88,9 +69,6 @@ const incrementAvailableCopies = async (bookId) => {
   return book;
 };
 
-/**
- * Get available books
- */
 const getAvailableBooks = async () => {
   return await Book.findAll({
     where: {

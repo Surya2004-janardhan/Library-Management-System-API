@@ -1,7 +1,7 @@
 const { addDays, differenceInDays, isAfter } = require("date-fns");
 
-const calculateDueDate = (borrowedAt) => {
-  return addDays(new Date(borrowedAt), 14);
+const calculateDueDate = (borrowedAt, loanPeriodDays = 14) => {
+  return addDays(new Date(borrowedAt), loanPeriodDays);
 };
 
 const calculateOverdueDays = (dueDate, returnDate = new Date()) => {
@@ -15,17 +15,11 @@ const calculateOverdueDays = (dueDate, returnDate = new Date()) => {
   return differenceInDays(returned, due);
 };
 
-/**
- * Calculate fine amount ($0.50 per day)
- */
 const calculateFineAmount = (overdueDays) => {
   const FINE_PER_DAY = 0.5;
   return overdueDays * FINE_PER_DAY;
 };
 
-/**
- * Check if transaction is overdue
- */
 const isOverdue = (dueDate) => {
   return isAfter(new Date(), new Date(dueDate));
 };

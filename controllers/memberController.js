@@ -18,9 +18,6 @@ const createMember = async (req, res) => {
   }
 };
 
-/**
- * Get all members
- */
 const getAllMembers = async (req, res) => {
   try {
     const members = await Member.findAll();
@@ -37,9 +34,6 @@ const getAllMembers = async (req, res) => {
   }
 };
 
-/**
- * Get member by ID
- */
 const getMemberById = async (req, res) => {
   try {
     const member = await Member.findByPk(req.params.id);
@@ -63,9 +57,6 @@ const getMemberById = async (req, res) => {
   }
 };
 
-/**
- * Get books borrowed by member
- */
 const getMemberBorrowedBooks = async (req, res) => {
   try {
     const transactions = await getMemberBorrowedBooksService(req.params.id);
@@ -83,9 +74,6 @@ const getMemberBorrowedBooks = async (req, res) => {
   }
 };
 
-/**
- * Update member
- */
 const updateMember = async (req, res) => {
   try {
     const member = await Member.findByPk(req.params.id);
@@ -111,9 +99,6 @@ const updateMember = async (req, res) => {
   }
 };
 
-/**
- * Delete member
- */
 const deleteMember = async (req, res) => {
   try {
     const member = await Member.findByPk(req.params.id);

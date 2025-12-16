@@ -1,7 +1,6 @@
 const { Sequelize } = require("sequelize");
 require("dotenv").config();
 
-// Create Sequelize instance with MySQL
 const sequelize = new Sequelize(
   process.env.DB_NAME,
   process.env.DB_USER,
@@ -20,7 +19,6 @@ const sequelize = new Sequelize(
   }
 );
 
-// Test database connection
 const testConnection = async () => {
   try {
     await sequelize.authenticate();

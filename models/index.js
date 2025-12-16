@@ -1,12 +1,10 @@
 const { sequelize } = require("../config/database");
 
-// Import models
 const Book = require("./Book");
 const Member = require("./Member");
 const Transaction = require("./Transaction");
 const Fine = require("./Fine");
 
-// Define associations
 Book.hasMany(Transaction, {
   foreignKey: "book_id",
   as: "transactions",

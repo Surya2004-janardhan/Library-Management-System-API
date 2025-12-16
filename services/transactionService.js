@@ -7,28 +7,18 @@ const {
 const { validateBorrowing } = require("./validationService");
 const { checkAndUpdateSuspension } = require("./memberService");
 
-/**
- * Transaction Service - Handles borrowing and return operations using Sequelize ORM
- */
-
-// Business rules
 const LOAN_PERIOD_DAYS = 14;
 const FINE_PER_DAY = 0.5;
 
-/**
- * Borrow a book - handles the complete borrowing workflow with transaction
- */
 const borrowBook = async (memberId, bookId) => {
   const t = await sequelize.transaction();
 
   try {
-    // Validate borrowing request
     const validation = await validateBorrowing(memberId, bookId);
     if (!validation.valid) {
       throw new Error(validation.errors.join("; "));
     }
 
-    // Get book and check availability
     const book = await Book.findByPk(bookId, { transaction: t });
     if (!book) {
       throw new Error("Book not found");
@@ -38,7 +28,6 @@ const borrowBook = async (memberId, bookId) => {
       throw new Error("No available copies");
     }
 
-    // Decrement available copies
     const newAvailableCopies = book.available_copies - 1;
     const newStatus = newAvailableCopies === 0 ? "borrowed" : book.status;
 
@@ -50,7 +39,6 @@ const borrowBook = async (memberId, bookId) => {
       { transaction: t }
     );
 
-    // Create transaction record
     const borrowedAt = new Date();
     const dueDate = calculateDueDate(borrowedAt, LOAN_PERIOD_DAYS);
 
@@ -67,7 +55,6 @@ const borrowBook = async (memberId, bookId) => {
 
     await t.commit();
 
-    // Fetch with associations
     return await Transaction.findByPk(transaction.id, {
       include: [
         {
@@ -86,14 +73,10 @@ const borrowBook = async (memberId, bookId) => {
   }
 };
 
-/**
- * Return a book - handles the complete return workflow with transaction
- */
 const returnBook = async (transactionId) => {
   const t = await sequelize.transaction();
 
   try {
-    // Get transaction details
     const transaction = await Transaction.findByPk(transactionId, {
       transaction: t,
     });
@@ -109,7 +92,6 @@ const returnBook = async (transactionId) => {
     const returnedAt = new Date();
     const overdueDays = calculateOverdueDays(transaction.due_date, returnedAt);
 
-    // Update transaction
     await transaction.update(
       {
         returned_at: returnedAt,
@@ -118,7 +100,6 @@ const returnBook = async (transactionId) => {
       { transaction: t }
     );
 
-    // Increment available copies
     const book = await Book.findByPk(transaction.book_id, { transaction: t });
     if (book) {
       await book.update(
@@ -130,7 +111,6 @@ const returnBook = async (transactionId) => {
       );
     }
 
-    // Calculate and create fine if overdue
     let fine = null;
     if (overdueDays > 0) {
       const fineAmount = overdueDays * FINE_PER_DAY;
@@ -147,7 +127,6 @@ const returnBook = async (transactionId) => {
 
     await t.commit();
 
-    // Check and update member suspension status
     await checkAndUpdateSuspension(transaction.member_id);
 
     return {
@@ -161,9 +140,6 @@ const returnBook = async (transactionId) => {
   }
 };
 
-/**
- * Get all overdue transactions
- */
 const getOverdueTransactions = async () => {
   return await Transaction.findAll({
     where: {
@@ -189,9 +165,6 @@ const getOverdueTransactions = async () => {
   });
 };
 
-/**
- * Update overdue transaction statuses
- */
 const updateOverdueStatuses = async () => {
   const [updatedCount] = await Transaction.update(
     { status: "overdue" },

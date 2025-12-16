@@ -1,13 +1,6 @@
 const { Member, Transaction } = require("../models");
 const { Op } = require("sequelize");
 
-/**
- * Member Service - Handles member status management using Sequelize ORM
- */
-
-/**
- * Suspend a member
- */
 const suspendMember = async (memberId) => {
   const member = await Member.findByPk(memberId);
 
@@ -23,9 +16,6 @@ const suspendMember = async (memberId) => {
   return member;
 };
 
-/**
- * Activate a member
- */
 const activateMember = async (memberId) => {
   const member = await Member.findByPk(memberId);
 
@@ -41,9 +31,6 @@ const activateMember = async (memberId) => {
   return member;
 };
 
-/**
- * Check and update member suspension status based on overdue count
- */
 const checkAndUpdateSuspension = async (memberId) => {
   const overdueCount = await Transaction.count({
     where: {
@@ -64,9 +51,6 @@ const checkAndUpdateSuspension = async (memberId) => {
   return await Member.findByPk(memberId);
 };
 
-/**
- * Get member's borrowed books
- */
 const getMemberBorrowedBooks = async (memberId) => {
   return await Transaction.findAll({
     where: {

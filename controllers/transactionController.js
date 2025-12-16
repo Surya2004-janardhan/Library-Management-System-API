@@ -5,9 +5,6 @@ const {
   updateOverdueStatuses: updateOverdueStatusesService,
 } = require("../services/transactionService");
 
-
-
-
 const borrowBook = async (req, res) => {
   try {
     const { member_id, book_id } = req.body;
@@ -34,9 +31,6 @@ const borrowBook = async (req, res) => {
   }
 };
 
-/**
- * Return a book
- */
 const returnBook = async (req, res) => {
   try {
     const result = await returnBookService(req.params.id);
@@ -54,9 +48,6 @@ const returnBook = async (req, res) => {
   }
 };
 
-/**
- * Get all overdue transactions
- */
 const getOverdueTransactions = async (req, res) => {
   try {
     const transactions = await getOverdueTransactionsService();
@@ -74,9 +65,6 @@ const getOverdueTransactions = async (req, res) => {
   }
 };
 
-/**
- * Update overdue statuses (admin/scheduled job)
- */
 const updateOverdueStatuses = async (req, res) => {
   try {
     const count = await updateOverdueStatusesService();

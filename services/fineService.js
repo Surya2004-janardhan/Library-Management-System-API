@@ -1,12 +1,5 @@
 const { Fine } = require("../models");
 
-/**
- * Fine Service - Handles fine payment and tracking using Sequelize ORM
- */
-
-/**
- * Pay a fine
- */
 const payFine = async (fineId) => {
   const fine = await Fine.findByPk(fineId, {
     include: [
@@ -32,9 +25,6 @@ const payFine = async (fineId) => {
   return fine;
 };
 
-/**
- * Get all unpaid fines for a member
- */
 const getUnpaidFines = async (memberId) => {
   return await Fine.findAll({
     where: {
@@ -51,9 +41,6 @@ const getUnpaidFines = async (memberId) => {
   });
 };
 
-/**
- * Get all fines for a member
- */
 const getMemberFines = async (memberId) => {
   return await Fine.findAll({
     where: {

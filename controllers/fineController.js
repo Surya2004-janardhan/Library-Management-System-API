@@ -5,13 +5,6 @@ const {
 } = require("../services/fineService");
 const { Fine } = require("../models");
 
-/**
- * Fine controller
- */
-
-/**
- * Pay a fine
- */
 const payFine = async (req, res) => {
   try {
     const fine = await payFineService(req.params.id);
@@ -65,9 +58,6 @@ const getUnpaidFines = async (req, res) => {
   }
 };
 
-/**
- * Get all fines for a member
- */
 const getMemberFines = async (req, res) => {
   try {
     const fines = await getMemberFinesService(req.params.memberId);

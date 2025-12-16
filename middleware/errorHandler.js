@@ -1,9 +1,6 @@
-
-
 const errorHandler = (err, req, res, next) => {
   console.error(err.stack);
 
-  // Sequelize validation errors
   if (err.name === "SequelizeValidationError") {
     return res.status(400).json({
       success: false,
@@ -15,7 +12,6 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
-  // Sequelize unique constraint errors
   if (err.name === "SequelizeUniqueConstraintError") {
     return res.status(409).json({
       success: false,
@@ -27,7 +23,6 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
-  // Sequelize foreign key constraint errors
   if (err.name === "SequelizeForeignKeyConstraintError") {
     return res.status(400).json({
       success: false,
@@ -35,7 +30,6 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
-  // Default error
   res.status(err.status || 500).json({
     success: false,
     message: err.message || "Internal server error",

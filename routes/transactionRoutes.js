@@ -18,7 +18,7 @@ router.post(
   handleValidationErrors,
   borrowBook
 );
-router.put(
+router.post(
   "/transactions/:id/return",
   transactionValidationRules.return,
   handleValidationErrors,
