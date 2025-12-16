@@ -1,9 +1,9 @@
-const { Book } = require("../models");
+const BookModel = require("../models/bookModel");
 const { getAvailableBooks } = require("../services/bookService");
 
 const createBook = async (req, res) => {
   try {
-    const book = await Book.create(req.body);
+    const book = await BookModel.create(req.body);
     res.status(201).json({
       success: true,
       data: book,
@@ -21,7 +21,7 @@ const createBook = async (req, res) => {
  */
 const getAllBooks = async (req, res) => {
   try {
-    const books = await Book.findAll();
+    const books = await BookModel.findAll();
     res.status(200).json({
       success: true,
       count: books.length,
