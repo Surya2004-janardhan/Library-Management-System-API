@@ -22,7 +22,7 @@ router.post(
 );
 router.get("/members", getAllMembers);
 router.get("/members/:id", getMemberById);
-router.get("/members/:id/borrowed", getMemberBorrowedBooks);
+router.get("/members/:id/books", getMemberBorrowedBooks);
 router.put(
   "/members/:id",
   memberValidationRules.update,
