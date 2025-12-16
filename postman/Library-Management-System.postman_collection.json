@@ -1,0 +1,317 @@
+{
+  "info": {
+    "name": "Library Management System API",
+    "description": "Complete API collection for testing the Library Management System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Books",
+      "item": [
+        {
+          "name": "Create Book",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isbn\": \"9780134685991\",\n  \"title\": \"Effective Java\",\n  \"author\": \"Joshua Bloch\",\n  \"category\": \"Programming\",\n  \"total_copies\": 5,\n  \"available_copies\": 5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/books",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books"]
+            }
+          }
+        },
+        {
+          "name": "Get All Books",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/books",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books"]
+            }
+          }
+        },
+        {
+          "name": "Get Available Books",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/books/available",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books", "available"]
+            }
+          }
+        },
+        {
+          "name": "Get Book by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/books/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books", "1"]
+            }
+          }
+        },
+        {
+          "name": "Update Book",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Effective Java - 3rd Edition\",\n  \"available_copies\": 4\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/books/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Book",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/api/books/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "books", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Members",
+      "item": [
+        {
+          "name": "Create Member",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"membership_number\": \"MEM001\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/members",
+              "host": ["{{base_url}}"],
+              "path": ["api", "members"]
+            }
+          }
+        },
+        {
+          "name": "Get All Members",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/members",
+              "host": ["{{base_url}}"],
+              "path": ["api", "members"]
+            }
+          }
+        },
+        {
+          "name": "Get Member by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/members/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "members", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get Member's Borrowed Books",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/members/1/borrowed",
+              "host": ["{{base_url}}"],
+              "path": ["api", "members", "1", "borrowed"]
+            }
+          }
+        },
+        {
+          "name": "Update Member",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Smith\",\n  \"status\": \"active\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/members/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "members", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Member",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/api/members/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "members", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Transactions",
+      "item": [
+        {
+          "name": "Borrow Book",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"member_id\": 1,\n  \"book_id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/transactions/borrow",
+              "host": ["{{base_url}}"],
+              "path": ["api", "transactions", "borrow"]
+            }
+          }
+        },
+        {
+          "name": "Return Book",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/transactions/1/return",
+              "host": ["{{base_url}}"],
+              "path": ["api", "transactions", "1", "return"]
+            }
+          }
+        },
+        {
+          "name": "Get Overdue Transactions",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/transactions/overdue",
+              "host": ["{{base_url}}"],
+              "path": ["api", "transactions", "overdue"]
+            }
+          }
+        },
+        {
+          "name": "Update Overdue Statuses",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/transactions/update-overdue",
+              "host": ["{{base_url}}"],
+              "path": ["api", "transactions", "update-overdue"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Fines",
+      "item": [
+        {
+          "name": "Get All Fines",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/fines",
+              "host": ["{{base_url}}"],
+              "path": ["api", "fines"]
+            }
+          }
+        },
+        {
+          "name": "Pay Fine",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/fines/1/pay",
+              "host": ["{{base_url}}"],
+              "path": ["api", "fines", "1", "pay"]
+            }
+          }
+        },
+        {
+          "name": "Get Member's Unpaid Fines",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/fines/member/1/unpaid",
+              "host": ["{{base_url}}"],
+              "path": ["api", "fines", "member", "1", "unpaid"]
+            }
+          }
+        },
+        {
+          "name": "Get All Member's Fines",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/fines/member/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "fines", "member", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": ["{{base_url}}"],
+          "path": ["health"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ]
+}
